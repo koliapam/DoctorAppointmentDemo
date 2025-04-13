@@ -1,5 +1,4 @@
 ﻿using DoctorAppointmentDemo.Data.Interfaces;
-using DoctorAppointmentDemo.Data.Repositories;
 using DoctorAppointmentDemo.Domain.Entities;
 using DoctorAppointmentDemo.Service.Interfaces;
 using System.Collections.Generic;
@@ -10,9 +9,9 @@ namespace DoctorAppointmentDemo.Service.Services
     {
         private readonly IPatientRepository _patientRepository;
 
-        public PatientService()
+        public PatientService(IPatientRepository patientRepository)
         {
-            _patientRepository = new PatientRepository();
+            _patientRepository = patientRepository;
         }
 
         public IEnumerable<Patient> GetAll()

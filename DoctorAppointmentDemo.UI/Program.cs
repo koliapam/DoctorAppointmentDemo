@@ -4,7 +4,7 @@ using DoctorAppointmentDemo.Data.Repositories;
 using DoctorAppointmentDemo.Service.Interfaces;
 using DoctorAppointmentDemo.Service.Services;
 using DoctorAppointmentDemo.Domain.Entities;
-using DoctorAppointmentDemo.Data.Storage; 
+using DoctorAppointmentDemo.Data.Storage;
 
 class Program
 {
@@ -15,28 +15,17 @@ class Program
     {
         Console.OutputEncoding = Encoding.UTF8;
 
-        
         Console.WriteLine("Оберіть тип зберігання даних:");
         Console.WriteLine("1 - JSON");
         Console.WriteLine("2 - XML");
         Console.Write("Ваш вибір: ");
 
-        IDataStorage<Patient> patientStorage;
-        IDataStorage<Appointment> appointmentStorage;
+        string? choice = Console.ReadLine()?.Trim();
+        string format = choice == "2" ? "XML" : "JSON";
 
-        string? choice = Console.ReadLine();
-        if (choice == "2")
-        {
-            patientStorage = new XmlDataStorage<Patient>("patients.xml");
-            appointmentStorage = new XmlDataStorage<Appointment>("appointments.xml");
-        }
-        else
-        {
-            patientStorage = new JsonDataStorage<Patient>("patients.json");
-            appointmentStorage = new JsonDataStorage<Appointment>("appointments.json");
-        }
+        IDataStorage<Patient> patientStorage = StorageFactory.CreatePatientStorage(format);
+        IDataStorage<Appointment> appointmentStorage = StorageFactory.CreateAppointmentStorage(format);
 
-        
         _patientService = new PatientService(new PatientRepository(patientStorage));
         _appointmentService = new AppointmentService(new AppointmentRepository(appointmentStorage));
 
@@ -80,7 +69,15 @@ class Program
         Console.Write("Додаткова інформація: ");
         string? additionalInfo = Console.ReadLine();
 
-        var patient = new Patient { Name = name, Surname = surname, Age = age, Address = address, AdditionalInfo = additionalInfo };
+        var patient = new Patient
+        {
+            Name = name,
+            Surname = surname,
+            Age = age,
+            Address = address,
+            AdditionalInfo = additionalInfo
+        };
+
         _patientService.Create(patient);
         Console.WriteLine("Пацієнта успішно додано!");
     }
@@ -111,7 +108,15 @@ class Program
         Console.Write("Опис: ");
         string? description = Console.ReadLine();
 
-        var appointment = new Appointment { PatientId = patientId, DoctorId = doctorId, DateTimeFrom = dateTimeFrom, DateTimeTo = dateTimeTo, Description = description };
+        var appointment = new Appointment
+        {
+            PatientId = patientId,
+            DoctorId = doctorId,
+            DateTimeFrom = dateTimeFrom,
+            DateTimeTo = dateTimeTo,
+            Description = description
+        };
+
         _appointmentService.Create(appointment);
         Console.WriteLine("Запис на прийом успішно створено!");
     }
